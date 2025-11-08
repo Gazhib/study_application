@@ -1,6 +1,6 @@
 import { Navigate, redirect } from "react-router-dom";
 import AuthForm from "../../features/auth/AuthForm";
-import { useUser } from "../../shared/useUser";
+import { useUser } from "../../stores/useUser";
 import { port } from "../../App";
 
 export default function AuthPage() {

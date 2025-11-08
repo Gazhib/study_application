@@ -18,7 +18,11 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 
 
-router = APIRouter()
+if not ALGORITHM:
+    raise ValueError("ALGORITHM environment variable is not set")
+
+
+router = APIRouter(tags=["auth"])
 
 password_hash = PasswordHash.recommended()
 
@@ -35,6 +39,9 @@ def create_refresh_or_access_token(data: dict, expiresDelta: timedelta):
   else:
     expire = datetime.now(timezone.utc) + timedelta(minutes=15)
   to_encode["exp"] = expire
+    
+  if not SECRET_KEY:
+    raise ValueError("SECRET_KEY environment variable is not set")
     
   encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
   return encoded_jwt
@@ -108,6 +115,8 @@ async def registration(form_data: Annotated[OAuth2PasswordRequestForm, Depends()
   hashed_password = hash_password(password)
   
   newUser = UserInDB(username=username, hashed_password=hashed_password, created_at=datetime.now())
+  
+  await newUser.create()
     
   token = create_refresh_or_access_token({"username": username}, timedelta(minutes=15))
   response.set_cookie(
@@ -127,7 +136,6 @@ async def registration(form_data: Annotated[OAuth2PasswordRequestForm, Depends()
     max_age=86400,
   )
   
-  await newUser.create()
   
   return newUser
 

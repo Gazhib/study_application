@@ -2,8 +2,7 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi import HTTPException, status, Depends, Request
 import jwt
 from jwt.exceptions import InvalidTokenError
-from .schemas.token import Token, TokenData
-from typing import Annotated
+from .schemas.token import  TokenData
 from .models.user import UserInDB
 
 from dotenv import load_dotenv
@@ -36,17 +35,20 @@ async def get_current_user(request: Request):
     try:
         if not ALGORITHM:
             raise ValueError("ALGORITHM environment variable is not set")
+        
+        if not SECRET_KEY:
+            raise ValueError("SECRET_KEY environment variable is not set")
+        
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("username")
+        user_id = payload.get("user_id")
         if username is None:
-            print("username", username)
             raise credentials_exception
         token_data = TokenData(username=username)
     except InvalidTokenError:
         raise credentials_exception
     
     user = await get_user(username = token_data.username)
-    print("user:", user)
     if user is None:
         raise credentials_exception
     
