@@ -11,6 +11,8 @@ from ....dependencies import get_current_user
 from beanie import SortDirection
 
 from ....schemas.task import FilterParams
+from ....models.timer import TimerSessionDB
+
 
 router = APIRouter(tags=["task"])
 
@@ -65,7 +67,7 @@ async def add_task(user: Annotated[UserInDB, Depends(get_current_user)], task: T
   return newTaskInDb
 
 
-@router.post("/tasks/{id}")
+@router.get("/tasks/{id}")
 async def get_task(id: str, user: Annotated[UserInDB, Depends(get_current_user)]):
   
   task = await TaskInDb.find(TaskInDb.id == ObjectId(id)).first_or_none()
@@ -73,7 +75,7 @@ async def get_task(id: str, user: Annotated[UserInDB, Depends(get_current_user)]
   if not task:
     raise HTTPException(status.HTTP_404_NOT_FOUND)
   
-  if str(task.user_id) != user.id:
+  if str(task.user_id) != str(user.id):
     raise HTTPException(status.HTTP_403_FORBIDDEN)
   
   return task
@@ -116,7 +118,9 @@ async def delete_task(id: str, changedTask: Task, user: Annotated[UserInDB, Depe
   await DBtask.delete()
   return {"detail": "Successfully deleted"}
 
-    
+
+
+
   
   
   

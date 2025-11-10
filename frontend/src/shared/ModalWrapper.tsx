@@ -37,6 +37,7 @@ export const Modal = forwardRef<modalRefScheme, PhotoModalScheme>(
 
     const style = {
       width: width,
+      height: height,
     };
 
     useEffect(() => {
@@ -54,12 +55,12 @@ export const Modal = forwardRef<modalRefScheme, PhotoModalScheme>(
     return createPortal(
       <dialog
         style={style}
-        className="[&::backdrop]:bg-black/60 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 [&:not([open])]:hidden rounded-[10px] p-0 inset-0 no-scrollbar bg-black/60"
+        className="[&::backdrop]:bg-black/60 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 [&:not([open])]:hidden rounded-[10px] p-0 inset-0 no-scrollbar bg-black/60 border-0"
         ref={dialogRef}
         onClose={() => setIsOpen(false)}
       >
         <main
-          className={`h-full w-full flex flex-col gap-[30px] transition-transform duration-500 ${
+          className={`min-h-full w-full flex flex-col gap-[30px] transition-transform duration-500 ${
             isOpen ? "translate-x-0" : "-translate-x-50"
           }`}
         >

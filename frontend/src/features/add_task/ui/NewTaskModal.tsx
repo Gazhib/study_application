@@ -26,8 +26,8 @@ export default function NewTaskModal({
   } = useTask();
 
   return (
-    <Modal ref={newTaskModalRef} height="auto" width="500px">
-      <Form className="flex flex-col gap-4 p-4 bg-[#111318] text-white border-[1px] border-[#1F2430] w-full h-full">
+    <Modal ref={newTaskModalRef} height="100vh" width="500px">
+      <Form className="flex flex-col gap-4 p-4 bg-[#111318] text-white border-[1px] border-[#1F2430] w-full min-h-screen">
         <section className="text-white border-b-[1px] border-[#1F2430] pb-4 flex flex-row justify-between">
           <h2 className="">New Task</h2>
           <button type="button" onClick={closeNewTaskModal} className="cursor-pointer ">

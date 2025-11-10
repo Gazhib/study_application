@@ -1,18 +1,17 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, HTTPException
+
+
 from .api.v1.routes import auth
 from .api.v1.routes import task
-from typing import Annotated
+from .api.v1.routes import timer
 
 from fastapi.middleware.cors import CORSMiddleware
 
-from .dependencies import get_current_user
-from .schemas.user import User
-
-
-from beanie import init_beanie, Document
+from beanie import init_beanie
 from pymongo import AsyncMongoClient
 from .models.user import UserInDB
 from .models.task import TaskInDb
+from .models.timer import TimerSessionDB
 
 
 from dotenv import load_dotenv
@@ -27,7 +26,7 @@ mongodb_client = None
 async def init_db():
     global mongodb_client
     client = AsyncMongoClient(MONGODB_URI)
-    await init_beanie(database=client[db_name], document_models=[UserInDB, TaskInDb])
+    await init_beanie(database=client[db_name], document_models=[UserInDB, TaskInDb, TimerSessionDB])
     mongodb_client = client
 
 
@@ -40,6 +39,7 @@ app = FastAPI()
 
 app.include_router(auth.router)
 app.include_router(task.router)
+app.include_router(timer.router)
 
 
 app.add_middleware(
